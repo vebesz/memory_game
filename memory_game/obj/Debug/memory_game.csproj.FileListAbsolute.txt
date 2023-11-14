@@ -1,0 +1,10 @@
+C:\Users\barna\source\repos\memory_game\memory_game\bin\Debug\memory_game.exe.config
+C:\Users\barna\source\repos\memory_game\memory_game\bin\Debug\memory_game.exe
+C:\Users\barna\source\repos\memory_game\memory_game\bin\Debug\memory_game.pdb
+C:\Users\barna\source\repos\memory_game\memory_game\obj\Debug\memory_game.csproj.AssemblyReference.cache
+C:\Users\barna\source\repos\memory_game\memory_game\obj\Debug\memory_game.Properties.Resources.resources
+C:\Users\barna\source\repos\memory_game\memory_game\obj\Debug\memory_game.csproj.GenerateResource.cache
+C:\Users\barna\source\repos\memory_game\memory_game\obj\Debug\memory_game.csproj.CoreCompileInputs.cache
+C:\Users\barna\source\repos\memory_game\memory_game\obj\Debug\memory_game.exe
+C:\Users\barna\source\repos\memory_game\memory_game\obj\Debug\memory_game.pdb
+C:\Users\barna\source\repos\memory_game\memory_game\obj\Debug\memory_game.StartGameForm.resources

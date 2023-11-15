@@ -1,6 +1,6 @@
 ﻿namespace memory_game
 {
-    partial class Form2
+    partial class NumbersDislplayForm
     {
         /// <summary>
         /// Required designer variable.
@@ -28,10 +28,17 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
+            this.SuspendLayout();
+            // 
+            // NumbersDislplayForm
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Text = "Form2";
+            this.Name = "NumbersDislplayForm";
+            this.Text = "Betűk";
+            this.ResumeLayout(false);
+
         }
 
         #endregion

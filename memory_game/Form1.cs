@@ -17,6 +17,8 @@ namespace memory_game
         RadioButton rb5Seconds, rb10Seconds, rb20Seconds;
         RadioButton rb1Digit, rb2Digits;
         Button btnStartGame;
+        Timer displayTimer;
+        NumbersDislplayForm numbersDislplayForm;
 
         public StartGameForm()
         {
@@ -67,24 +69,57 @@ namespace memory_game
             btnStartGame.Click += new EventHandler(StartGame_Click);
 
             Controls.Add(btnStartGame);
+
+            displayTimer = new Timer();
+            displayTimer.Tick += new EventHandler(DisplayTimer_Tick);
         }
         
         private void StartGame_Click(object sender, EventArgs e)
             {
-                // Ide kerül a játék indításának logikája
-                MessageBox.Show("A játék elindult!");
+            // input ellenőrzés
+            if ((!rb6Numbers.Checked && !rb9Numbers.Checked) || (!rb5Seconds.Checked && !rb10Seconds.Checked && !rb20Seconds.Checked) || (!rb1Digit.Checked && !rb2Digits.Checked
+                ))
+            {
+                MessageBox.Show("Nincs minden input megadva!");
+                return;
             }
+
+            // random számok generálása
+            int numberCount = rb6Numbers.Checked ? 6 : 9;
+            int showTime = rb5Seconds.Checked ? 5 : rb10Seconds.Checked ? 10 : 20;
+            int[] numbers = new int[numberCount];
+            Random rnd = new Random();
+            for (int i = 0; i < numberCount; i++)
+            {
+            numbers[i] = rnd.Next(1, rb1Digit.Checked?10:100);
+            }
+            // Számok megjelenítése
+            numbersDislplayForm = new NumbersDislplayForm(numbers);
+            numbersDislplayForm.Show();
+            displayTimer.Interval = showTime * 1000; // Idő átváltása ezredmásodpercre
+            displayTimer.Start();
+        }
+
+        private void DisplayTimer_Tick(object sender, EventArgs e)
+        {
+            displayTimer.Stop();
+            if (numbersDislplayForm != null && !numbersDislplayForm.IsDisposed)
+            {
+                numbersDislplayForm.Close();
+            }
+        }
+
         private void RbNumbers_CheckedChanged(object sender, EventArgs e)
         {
             if (rb6Numbers.Checked)
             {
-                rb20Seconds.Enabled = false;
-                rb5Seconds.Enabled = true;
+                rb20Seconds.Enabled = true;
+                rb5Seconds.Enabled = false;
             }
             if (rb9Numbers.Checked)
             {
-                rb20Seconds.Enabled = true;
-                rb5Seconds.Enabled = false;
+                rb20Seconds.Enabled = false;
+                rb5Seconds.Enabled = true;
             }
         }
     }

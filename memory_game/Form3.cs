@@ -10,11 +10,11 @@ namespace memory_game
         Button restartButton;
         Button exitButton;
 
-        public Form3(int correctGuesses, int totalGuesses)
+        public Form3(int totalGuesses, int correctGuesses)
         {
             InitializeComponent();
 
-            this.Size = new Size(350, 200);
+            this.Size = new Size(450, 200);
             this.StartPosition = FormStartPosition.CenterParent;
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
@@ -28,17 +28,6 @@ namespace memory_game
                 Location = new Point(50, 20),
                 Font = new Font("Arial", 12, FontStyle.Bold)
             };
-            this.Controls.Add(resultLabel);
-
-            restartButton = new Button
-            {
-                Text = "Újrakezdés",
-                Size = new Size(100, 30),
-                Location = new Point(50, 100),
-                Font = new Font("Arial", 10, FontStyle.Regular)
-            };
-            restartButton.Click += RestartButton_Click;
-            this.Controls.Add(restartButton);
 
             exitButton = new Button
             {
@@ -51,11 +40,7 @@ namespace memory_game
             this.Controls.Add(exitButton);
         }
 
-        private void RestartButton_Click(object sender, EventArgs e)
-        {
-            // Itt implementálhatod az újrakezdés logikáját
-            this.Close();
-        }
+    
 
         private void ExitButton_Click(object sender, EventArgs e)
         {

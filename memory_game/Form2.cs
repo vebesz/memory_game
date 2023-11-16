@@ -20,29 +20,41 @@ namespace memory_game
         private int maxGuesses;
         private int currentGuesses;
         private int successGuesses;
+        
+        private bool started = false;
 
 
         public NumbersDislplayForm(int[] numbers, int showTime)
         {
-            this.Size = new Size(300, numbers.Length == 6 ? 300 : 400);
+            InitializeComponent();
+
+            Console.WriteLine(numbers.Length);
+
             this.StartPosition = FormStartPosition.CenterParent;
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.ShowInTaskbar = false;
-            hideTimer = new Timer();
-            hideTimer.Interval = showTime * 1000; // Átváltás ezredmásodpercre
-            hideTimer.Tick += new EventHandler(HideTimer_Tick);
-            hideTimer.Start();
             this.maxGuesses = numbers.Length;
             this.currentGuesses = 0;
+
+            // számok elrejtésének timere
+            hideTimer = new Timer();
+            hideTimer.Interval = showTime * 1000;
+            hideTimer.Tick += new EventHandler(HideTimer_Tick);
+            hideTimer.Start();
+
+          
 
             // ellenőrzés időzítő
             checkTimer = new Timer();
             checkTimer.Interval = 2000; // 2 másodperc
             checkTimer.Tick += new EventHandler(CheckTimer_Tick);
 
+
+            // kártyák megkeverése
             var allNumbers = numbers.Concat(numbers).OrderBy(x => Guid.NewGuid()).ToArray();
+
 
             int rows = numbers.Length; // Sorok száma
             int cols = 6; // Mindig 2 oszlop, mivel minden szám kétszer jelenik meg
@@ -52,6 +64,11 @@ namespace memory_game
             int startX = 10;
             int startY = 10;
 
+            //this.Size = new Size(300, 1000);
+            this.Size = new Size(cols * (buttonWidth + spacing) + 20, rows * (buttonHeight + spacing) + 20);
+            // újraméretezhető
+            this.FormBorderStyle = FormBorderStyle.Sizable;
+            
             foreach (int number in allNumbers)
             {
                 cards.Add(new Card(number));
@@ -81,6 +98,8 @@ namespace memory_game
             this.Size = new Size(cols * (buttonWidth + spacing) + 20, 300);
 
         }
+
+        // számok elrejtése X idő után
         private void HideTimer_Tick(object sender, EventArgs e)
         {
             hideTimer.Stop();
@@ -89,12 +108,15 @@ namespace memory_game
                 if (control is Button button)
                 {
                     button.Text = "?"; // Szöveg cseréje kérdőjelre
+                    started = true;
                 }
             }
         }
 
         private void CardButton_Click(object sender, EventArgs e)
         {
+            if (!started) return; // Ha még nem kezdődött el a játék, ne csináljon semmit
+
             Button clickedButton = sender as Button;
             Card card = clickedButton.Tag as Card;
 
@@ -111,20 +133,18 @@ namespace memory_game
                     secondRevealedCard = clickedButton;
                     card.Reveal();
                     clickedButton.Text = card.Number.ToString();
-                    checkTimer.Start(); // Indítja a Timer-t az összehasonlításhoz
-                }
-            }
+                    checkTimer.Start(); // Indítja a timer-t az összehasonlításhoz
 
-            // Ha egy új kártyát fed fel, növelje a tippelések számát
-            if (firstRevealedCard == null || (secondRevealedCard == null && firstRevealedCard != clickedButton))
-            {
-                currentGuesses++;
-                Console.WriteLine("Current Guesses", currentGuesses);
-                if (currentGuesses >= maxGuesses)
-                {
-                   Form3 form3 = new Form3(maxGuesses, currentGuesses);
-                    form3.ShowDialog();
-                    this.Close();
+                    currentGuesses++;
+
+                    // ha elfogytak a tippek
+                    if (currentGuesses >= maxGuesses)
+                    {
+                        // záró képernyő mutatása
+                        Form3 form3 = new Form3(maxGuesses, successGuesses);
+                        form3.ShowDialog();
+                        this.Close();
+                    }
                 }
             }
         }
@@ -143,6 +163,7 @@ namespace memory_game
                 secondRevealedCard.ForeColor = Color.Green;
                 firstCard.IsMatched = true;
                 secondCard.IsMatched = true;
+                successGuesses++;
             }
             else
             {

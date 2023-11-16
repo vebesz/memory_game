@@ -17,7 +17,6 @@ namespace memory_game
         RadioButton rb5Seconds, rb10Seconds, rb20Seconds;
         RadioButton rb1Digit, rb2Digits;
         Button btnStartGame;
-        Timer displayTimer;
         NumbersDislplayForm numbersDislplayForm;
 
         public StartGameForm()
@@ -70,8 +69,6 @@ namespace memory_game
 
             Controls.Add(btnStartGame);
 
-            displayTimer = new Timer();
-            displayTimer.Tick += new EventHandler(DisplayTimer_Tick);
         }
         
         private void StartGame_Click(object sender, EventArgs e)
@@ -84,9 +81,11 @@ namespace memory_game
                 return;
             }
 
+            int showTime = rb5Seconds.Checked ? 5 : rb10Seconds.Checked ? 10 : 20;
+
+
             // random számok generálása
             int numberCount = rb6Numbers.Checked ? 6 : 9;
-            int showTime = rb5Seconds.Checked ? 5 : rb10Seconds.Checked ? 10 : 20;
             int[] numbers = new int[numberCount];
             Random rnd = new Random();
             for (int i = 0; i < numberCount; i++)
@@ -96,17 +95,6 @@ namespace memory_game
             // Számok megjelenítése
             numbersDislplayForm = new NumbersDislplayForm(numbers, showTime);
             numbersDislplayForm.Show();
-            displayTimer.Interval = showTime * 1000; // Idő átváltása ezredmásodpercre
-            displayTimer.Start();
-        }
-
-        private void DisplayTimer_Tick(object sender, EventArgs e)
-        {
-            //displayTimer.Stop();
-            //if (numbersDislplayForm != null && !numbersDislplayForm.IsDisposed)
-            //{
-            //    numbersDislplayForm.Close();
-            //}
         }
 
         private void RbNumbers_CheckedChanged(object sender, EventArgs e)

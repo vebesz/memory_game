@@ -9,3 +9,4 @@ C:\Users\barna\source\repos\memory_game\memory_game\obj\Debug\memory_game.exe
 C:\Users\barna\source\repos\memory_game\memory_game\obj\Debug\memory_game.pdb
 C:\Users\barna\source\repos\memory_game\memory_game\obj\Debug\memory_game.StartGameForm.resources
 C:\Users\barna\source\repos\memory_game\memory_game\obj\Debug\memory_game.NumbersDislplayForm.resources
+C:\Users\barna\source\repos\memory_game\memory_game\obj\Debug\memory_game.Form3.resources

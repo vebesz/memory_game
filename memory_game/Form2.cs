@@ -12,7 +12,17 @@ namespace memory_game
 {
     public partial class NumbersDislplayForm : Form
     {
-        public NumbersDislplayForm(int[] numbers)
+        List<Card> cards = new List<Card>();
+        Timer hideTimer;
+        private Button firstRevealedCard = null;
+        private Button secondRevealedCard = null;
+        private Timer checkTimer;
+        private int maxGuesses;
+        private int currentGuesses;
+        private int successGuesses;
+
+
+        public NumbersDislplayForm(int[] numbers, int showTime)
         {
             this.Size = new Size(300, numbers.Length == 6 ? 300 : 400);
             this.StartPosition = FormStartPosition.CenterParent;
@@ -20,22 +30,156 @@ namespace memory_game
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.ShowInTaskbar = false;
+            hideTimer = new Timer();
+            hideTimer.Interval = showTime * 1000; // Átváltás ezredmásodpercre
+            hideTimer.Tick += new EventHandler(HideTimer_Tick);
+            hideTimer.Start();
+            this.maxGuesses = numbers.Length;
+            this.currentGuesses = 0;
 
-            int labelY = 20;
-            foreach (int number in numbers)
+            // ellenőrzés időzítő
+            checkTimer = new Timer();
+            checkTimer.Interval = 2000; // 2 másodperc
+            checkTimer.Tick += new EventHandler(CheckTimer_Tick);
+
+            var allNumbers = numbers.Concat(numbers).OrderBy(x => Guid.NewGuid()).ToArray();
+
+            int rows = numbers.Length; // Sorok száma
+            int cols = 6; // Mindig 2 oszlop, mivel minden szám kétszer jelenik meg
+            int buttonWidth = 120;
+            int buttonHeight = 120;
+            int spacing = 10;
+            int startX = 10;
+            int startY = 10;
+
+            foreach (int number in allNumbers)
             {
-                Label numberLabel = new Label
-                {
-                    Text = number.ToString(),
-                    Location = new Point(10, labelY),
-                    Size = new Size(280, 25),
-                    // set a bigger font size
-                    Font = new Font("Arial", 16, FontStyle.Bold),
-                };
+                cards.Add(new Card(number));
+            }
 
-                this.Controls.Add(numberLabel);
-                labelY += 30;
-            };
+
+            int index = 0;
+            foreach (Card card in cards)
+            {
+                int row = index / cols;
+                int col = index % cols;
+                Button cardButton = new Button
+                {
+                    Width = buttonWidth,
+                    Height = buttonHeight,
+                    Location = new Point(startX + col * (buttonWidth + spacing), startY + row * (buttonHeight + spacing)),
+                    Tag = card,
+                    Text = card.Number.ToString(), // Kezdetben jelenítsd meg a számot
+                    Font = new Font("Arial", 24, FontStyle.Bold),
+                    BackColor = Color.LightGray
+                };
+                cardButton.Click += new EventHandler(CardButton_Click);
+
+                this.Controls.Add(cardButton);
+                index++;
+            }
+            this.Size = new Size(cols * (buttonWidth + spacing) + 20, 300);
+
+        }
+        private void HideTimer_Tick(object sender, EventArgs e)
+        {
+            hideTimer.Stop();
+            foreach (Control control in this.Controls)
+            {
+                if (control is Button button)
+                {
+                    button.Text = "?"; // Szöveg cseréje kérdőjelre
+                }
+            }
+        }
+
+        private void CardButton_Click(object sender, EventArgs e)
+        {
+            Button clickedButton = sender as Button;
+            Card card = clickedButton.Tag as Card;
+
+            if (!card.IsMatched && clickedButton != firstRevealedCard)
+            {
+                if (firstRevealedCard == null)
+                {
+                    firstRevealedCard = clickedButton;
+                    card.Reveal();
+                    clickedButton.Text = card.Number.ToString();
+                }
+                else if (secondRevealedCard == null)
+                {
+                    secondRevealedCard = clickedButton;
+                    card.Reveal();
+                    clickedButton.Text = card.Number.ToString();
+                    checkTimer.Start(); // Indítja a Timer-t az összehasonlításhoz
+                }
+            }
+
+            // Ha egy új kártyát fed fel, növelje a tippelések számát
+            if (firstRevealedCard == null || (secondRevealedCard == null && firstRevealedCard != clickedButton))
+            {
+                currentGuesses++;
+                Console.WriteLine("Current Guesses", currentGuesses);
+                if (currentGuesses >= maxGuesses)
+                {
+                   Form3 form3 = new Form3(maxGuesses, currentGuesses);
+                    form3.ShowDialog();
+                    this.Close();
+                }
+            }
+        }
+
+        private void CheckTimer_Tick(object sender, EventArgs e)
+        {
+            checkTimer.Stop();
+
+            Card firstCard = firstRevealedCard.Tag as Card;
+            Card secondCard = secondRevealedCard.Tag as Card;
+
+            if (firstCard.Number == secondCard.Number)
+            {
+                // Egyezik
+                firstRevealedCard.ForeColor = Color.Green;
+                secondRevealedCard.ForeColor = Color.Green;
+                firstCard.IsMatched = true;
+                secondCard.IsMatched = true;
+            }
+            else
+            {
+                // Nem egyezik, fordítsd vissza őket
+                firstRevealedCard.Text = "?";
+                secondRevealedCard.Text = "?";
+                firstCard.Hide();
+                secondCard.Hide();
+            }
+
+            firstRevealedCard = null;
+            secondRevealedCard = null;
+        }
+
+    }
+
+    public class Card
+    {
+        public int Number { get; private set; }
+        public bool IsRevealed { get; set; }
+        public bool IsMatched { get; set; }
+
+        public Card(int number)
+        {
+            Number = number;
+            IsRevealed = true;
+            IsMatched = false;
+        }
+
+        public void Reveal()
+        {
+            IsRevealed = true;
+        }
+
+        public void Hide()
+        {
+            IsRevealed = false;
         }
     }
 }

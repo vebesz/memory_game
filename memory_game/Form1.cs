@@ -94,7 +94,7 @@ namespace memory_game
             numbers[i] = rnd.Next(1, rb1Digit.Checked?10:100);
             }
             // Számok megjelenítése
-            numbersDislplayForm = new NumbersDislplayForm(numbers);
+            numbersDislplayForm = new NumbersDislplayForm(numbers, showTime);
             numbersDislplayForm.Show();
             displayTimer.Interval = showTime * 1000; // Idő átváltása ezredmásodpercre
             displayTimer.Start();
@@ -102,11 +102,11 @@ namespace memory_game
 
         private void DisplayTimer_Tick(object sender, EventArgs e)
         {
-            displayTimer.Stop();
-            if (numbersDislplayForm != null && !numbersDislplayForm.IsDisposed)
-            {
-                numbersDislplayForm.Close();
-            }
+            //displayTimer.Stop();
+            //if (numbersDislplayForm != null && !numbersDislplayForm.IsDisposed)
+            //{
+            //    numbersDislplayForm.Close();
+            //}
         }
 
         private void RbNumbers_CheckedChanged(object sender, EventArgs e)
